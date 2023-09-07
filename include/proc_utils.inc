@@ -67,9 +67,13 @@
      SUB SP, SP, #16*\n
 .ENDM
 
-.EQU PUSH, PUSH.L
+.MACRO PUSH reg 
+     PUSH.L \reg
+.ENDM
 
-.EQU POP, POP.L
+.MACRO POP reg
+     POP.L \reg
+.ENDM
 
 /*
  * Push one register in the lower 8 bytes of a
