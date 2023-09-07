@@ -70,9 +70,10 @@ console_puts:
           B __console_puts_printing
           
      __console_puts_end:
+.IF kCONSOLE_PUTS_LINE_FEED
           MOV X0, #0x0A
           BL console_putc
-
+.ENDIF
      mLEAVE
      RET
 
