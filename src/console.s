@@ -28,7 +28,9 @@ console_putc:
 
 /*
  * Obtain and return one character from
- * the console.
+ * the console. Keep it in mind that the
+ * line feed will stay in the buffer after
+ * the function is called.
  * 
  * C Prototype: char console_getc(void);
  */
@@ -58,22 +60,25 @@ console_getc:
 console_puts:
      mENTER
 
+     CBZ X0, __console_puts_end
+
      MOV X1, X0
      MOV X2, #1
      MOV X8, #kWRITE
      __console_puts_printing:
           LDRB W3, [X1]
-          CBZ W3, __console_puts_end
+          CBZ W3, __console_puts_line_feed
           MOV X0, #kSTDOUT
           SVC #0
           ADD X1, X1, #1
           B __console_puts_printing
           
-     __console_puts_end:
+     __console_puts_line_feed:
 .IF kCONSOLE_PUTS_LINE_FEED
           MOV X0, #0x0A
           BL console_putc
 .ENDIF
+     __console_puts_end:
      mLEAVE
      RET
 
@@ -87,7 +92,8 @@ console_puts:
 console_gets:
      mENTER
      
-     MOV X3, #0
+     MOV X3, XZR
+     CBZ X0, __console_gets_end
 
      MOV X1, X0
      MOV X2, #1
@@ -97,14 +103,15 @@ console_gets:
           SVC #0
           LDRB W0, [X1], #1
           CMP W0, #0x0A
-          B.EQ __console_gets_end
+          B.EQ __console_gets_end_of_string
           ADD X3, X3, #1
           B __console_gets_reading
               
+     __console_gets_end_of_string:
+          MOV W4, WZR
+          STRB W4, [X1, #-1]
+
      __console_gets_end:
-     MOV W4, #0
-     STRB W4, [X1, #-1]
      MOV X0, X3
      mLEAVE
      RET
-
