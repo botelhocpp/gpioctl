@@ -13,17 +13,17 @@
  */
 .GLOBAL file_open
 file_open:
-     mENTER
+    mENTER
 
-     MOV X3, X2
-     MOV X2, X1
-     MOV X1, X0
-     MOV X0, #kFILE_RELATIVE_PATH
-     MOV X8, #kOPEN
-     SVC #0
+    MOV X3, X2
+    MOV X2, X1
+    MOV X1, X0
+    MOV X0, #kFILE_RELATIVE_PATH
+    MOV X8, #kOPEN
+    SVC #0
 
-     mLEAVE
-     RET
+    mLEAVE
+    RET
 
 /*
  * Closes a file whose fd has been given.
@@ -32,17 +32,17 @@ file_open:
  */
 .GLOBAL file_close
 file_close:
-     mENTER
+    mENTER
 
-     CMP X0, kSTDERR
-     B.LE __file_close_end
+    CMP X0, kSTDERR
+    B.LE __file_close_end
 
-     MOV X8, #kCLOSE
-     SVC #0
+    MOV X8, #kCLOSE
+    SVC #0
 
-     __file_close_end:
-     mLEAVE
-     RET
+    __file_close_end:
+    mLEAVE
+    RET
 
 /*
  * Obtain the current line of the file with given fd,
@@ -52,30 +52,30 @@ file_close:
  */
 .GLOBAL file_gets
 file_gets:
-     mENTER
-     
-     MOV X3, #0
-     MOV X4, X0
+    mENTER
+    
+    MOV X3, XZR
+    MOV X4, X0
 
-     MOV X2, #1
-     MOV X8, #kREAD
-     __file_gets_reading:
-          SVC #0
-          CBZ X0, __file_gets_end
-          LDRB W0, [X1], #1
-          CMP W0, #0x0A
-          B.EQ __file_gets_end
-          CBZ W0, __file_gets_end
-          ADD X3, X3, #1
-          MOV X0, X4
-          B __file_gets_reading
+    MOV X2, #1
+    MOV X8, #kREAD
+    __file_gets_reading:
+        SVC #0
+        CBZ X0, __file_gets_end
+        LDRB W0, [X1], #1
+        CMP W0, #0x0A
+        B.EQ __file_gets_end
+        CBZ W0, __file_gets_end
+        ADD X3, X3, #1
+        MOV X0, X4
+        B __file_gets_reading
               
-     __file_gets_end:
-     MOV W4, #0
-     STRB W4, [X1, #-1]
-     MOV X0, X3
-     mLEAVE
-     RET
+    __file_gets_end:
+    MOV W4, WZR
+    STRB W4, [X1, #-1]
+    MOV X0, X3
+    mLEAVE
+    RET
 
 /*
  * Put the given string in the file with given fd. The
@@ -85,27 +85,27 @@ file_gets:
  */
 .GLOBAL file_puts
 file_puts:
-     mENTER
+    mENTER
 
-     MOV X4, X0
+    MOV X4, X0
 
-     MOV X2, #1
-     MOV X8, #kWRITE
-     __file_puts_printing:
-          LDRB W3, [X1]
-          CBZ W3, __file_puts_end
-          MOV X0, X4
-          SVC #0
-          ADD X1, X1, #1
-          B __file_puts_printing
+    MOV X2, #1
+    MOV X8, #kWRITE
+    __file_puts_printing:
+        LDRB W3, [X1]
+        CBZ W3, __file_puts_end
+        MOV X0, X4
+        SVC #0
+        ADD X1, X1, #1
+        B __file_puts_printing
           
-     __file_puts_end:
+    __file_puts_end:
 .IF kFILE_PUTS_LINE_FEED
-          MOV X5, #0x0A
-          PUSH X5
-          MOV X1, SP
-          MOV X0, X4
-          SVC #0
+        MOV X5, #0x0A
+        PUSH X5
+        MOV X1, SP
+        MOV X0, X4
+        SVC #0
 .ENDIF
-     mLEAVE
-     RET
+    mLEAVE
+    RET

@@ -27,12 +27,12 @@
  * relative to the position of the
  * binary.
  */
-.EQU kFILE_RELATIVE_PATH,     -100
+.EQU kFILE_RELATIVE_PATH,       -100
 
 /*
  * Controls whether the function file_puts(2)
  * puts an aditional line feed at the end.
  */
-.EQU kFILE_PUTS_LINE_FEED, 0
+.EQU kFILE_PUTS_LINE_FEED,      0
 
 .ENDIF

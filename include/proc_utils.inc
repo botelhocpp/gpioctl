@@ -22,8 +22,8 @@
  * it by 16 bytes, then, stores SP in X29.
  */
 .MACRO mENTER
-     STP X29, X30, [SP, #-16]!
-     MOV X29, SP
+    STP X29, X30, [SP, #-16]!
+    MOV X29, SP
 .ENDM   
 
 /*
@@ -32,47 +32,47 @@
  * the stack, maintaning the 16 bytes alignment.
  */
 .MACRO mLEAVE
-     MOV SP, X29
-     LDP X29, X30, [SP], #16
+    MOV SP, X29
+    LDP X29, X30, [SP], #16
 .ENDM  
 
 /*
  * Exits the application with success code.
  */
 .MACRO mEXIT_OK
-     MOV X0, #0
-     BL sysexit
+    MOV X0, XZR
+    BL sysexit
 .ENDM
 
 /*
  * Exits the application with failure code.
  */
 .MACRO mEXIT_ERROR
-     MOV X0, #1
-     BL sysexit
+    MOV X0, #1
+    BL sysexit
 .ENDM
 
 .MACRO mGET_ARGC reg
-     LDR \reg, [SP, #16]
+    LDR \reg, [SP, #16]
 .ENDM
 
 .MACRO mGET_ARGV reg
-     ADD \reg, SP, #24
+    ADD \reg, SP, #24
 .ENDM
 
 /*
  * Reserves n blocks of 16-bytes in the stack. 
  */
 .MACRO mRESERVE n
-     SUB SP, SP, #16*\n
+    SUB SP, SP, #16*\n
 .ENDM
 
 .MACRO PUSH reg 
-     PUSH.L \reg
+    PUSH.L \reg
 .ENDM
 
 .MACRO POP reg
-     POP.L \reg
+    POP.L \reg
 .ENDM
 
 /*
@@ -80,7 +80,7 @@
  * 16-byte block. 
  */
 .MACRO PUSH.L reg
-     STR \reg, [SP, #-16]!
+    STR \reg, [SP, #-16]!
 .ENDM
 
 /*
@@ -88,36 +88,36 @@
  * 16-byte block. 
  */
 .MACRO PUSH.H reg
-     STR \reg, [SP, #8]
+    STR \reg, [SP, #8]
 .ENDM
 
 /*
  * Push two registers in a 16-byte block. 
  */
 .MACRO PUSH.P reg1, reg2
-     STP \reg1, \reg2, [SP, #-16]!
+    STP \reg1, \reg2, [SP, #-16]!
 .ENDM
 
 .MACRO POP.L reg
-     LDR \reg, [SP], #16
+    LDR \reg, [SP], #16
 .ENDM
 
 .MACRO POP.H reg
-     LDR \reg, [SP, #8]
+    LDR \reg, [SP, #8]
 .ENDM
 
 .MACRO POP.P reg1, reg2
-     LDP \reg1, \reg2, [SP], #16
+    LDP \reg1, \reg2, [SP], #16
 .ENDM
 
 .MACRO PUSH.F reg
-     MRS \reg, NZCV
-     PUSH.L \reg
+    MRS \reg, NZCV
+    PUSH.L \reg
 .ENDM
 
 .MACRO POP.F reg
-     POP.L \reg
-     MSR NZCV, \reg
+    POP.L \reg
+    MSR NZCV, \reg
 .ENDM
 
 .ENDIF

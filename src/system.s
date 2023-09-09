@@ -12,5 +12,5 @@
  */
 .GLOBAL sysexit
 sysexit:
-     MOV X8, #kEXIT
-     SVC #0
+    MOV X8, #kEXIT
+    SVC #0
